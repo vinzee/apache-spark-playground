@@ -14,7 +14,7 @@ https://www.tutorialkart.com/apache-spark/how-to-install-spark-on-mac-os/
 ```sh
 $ brew install scala
 $ brew install apache-spark
-$$ scala home - /usr/local/opt/scala/idea
+$ scala home - /usr/local/opt/scala/idea
 ```
 
 ### Commands
@@ -22,6 +22,10 @@ $$ scala home - /usr/local/opt/scala/idea
 $ spark-shell
 $ sbt assembly
 ```
+
+### Intellij Setup
+- https://docs.scala-lang.org/getting-started/intellij-track/building-a-scala-project-with-intellij-and-sbt.html
+
 
 ### UI Dashboard
 http://localhost:4040
