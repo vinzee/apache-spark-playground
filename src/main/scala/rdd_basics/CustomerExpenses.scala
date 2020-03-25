@@ -1,3 +1,5 @@
+package rdd_basics
+
 import org.apache.spark.SparkContext
 
 object CustomerExpenses {
@@ -11,7 +13,7 @@ object CustomerExpenses {
       (columns(0), columns(1).toInt)
     })
 
-    val ordersByCustomer = ordersMap.reduceByKey((x,y) => x + y)
+    val ordersByCustomer = ordersMap.reduceByKey((x, y) => x + y)
 
     ordersByCustomer.foreach(println)
   }

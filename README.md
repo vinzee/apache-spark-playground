@@ -1,8 +1,9 @@
 # Apache Spark Playground
 
 ### Udemy Apache Spark with Scala
-- https://mathworks.udemy.com/course/apache-spark-with-scala-hands-on-with-big-data
-- Dataset - http://media.sundog-soft.com/SparkScala/SparkScala.zip
+- Official Spark Examples - https://github.com/apache/spark/tree/master/examples/src/main/scala/org/apache/spark/examples
+- Udemy - https://udemy.com/course/apache-spark-with-scala-hands-on-with-big-data
+- Udemy Dataset - http://media.sundog-soft.com/SparkScala/SparkScala.zip
 
 ### Movie Lens Dataset
 - https://grouplens.org/datasets/movielens/

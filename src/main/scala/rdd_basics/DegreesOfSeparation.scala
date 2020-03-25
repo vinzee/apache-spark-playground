@@ -1,3 +1,5 @@
+package rdd_basics
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
@@ -6,7 +8,7 @@ import org.apache.spark.util.LongAccumulator
 import scala.collection.mutable.ArrayBuffer
 
 /** Finds the degrees of separation between two Marvel comic book characters, based
- *  on co-appearances in a comic.
+ * on co-appearances in a comic.
  */
 object DegreesOfSeparation {
 
@@ -19,7 +21,7 @@ object DegreesOfSeparation {
   val startCharacterID = 5306 //SpiderMan
   val targetCharacterID = 14 //ADAM 3,031 (who?)
   // We make our accumulator a "global" Option so we can reference it in a mapper later.
-  var hitCounter:Option[LongAccumulator] = None
+  var hitCounter: Option[LongAccumulator] = None
 
   /** Our main function where the action happens */
   def main(args: Array[String]) {
@@ -27,7 +29,7 @@ object DegreesOfSeparation {
     // Set the log level to only print errors
     Logger.getLogger("org").setLevel(Level.ERROR)
 
-     // Create a SparkContext using every core of the local machine
+    // Create a SparkContext using every core of the local machine
     val sc = new SparkContext("local[*]", "DegreesOfSeparation")
 
     // Our accumulator, used to signal when we find the target
@@ -36,7 +38,7 @@ object DegreesOfSeparation {
 
     var iterationRdd = createStartingRdd(sc)
 
-    var iteration:Int = 0
+    var iteration: Int = 0
     for (iteration <- 1 to 10) {
       println("Running BFS Iteration# " + iteration)
 
@@ -53,7 +55,7 @@ object DegreesOfSeparation {
         val hitCount = hitCounter.get.value
         if (hitCount > 0) {
           println("Hit the target character! From " + hitCount +
-              " different direction(s).")
+            " different direction(s).")
           return
         }
       }
@@ -65,7 +67,7 @@ object DegreesOfSeparation {
   }
 
   /** Create "iteration 0" of our RDD of BFSNodes */
-  def createStartingRdd(sc:SparkContext): RDD[BFSNode] = {
+  def createStartingRdd(sc: SparkContext): RDD[BFSNode] = {
     val inputFile = sc.textFile("resources/marvel-graph.txt")
     return inputFile.map(convertToBFS)
   }
@@ -81,13 +83,13 @@ object DegreesOfSeparation {
 
     // Extract subsequent hero ID's into the connections array
     var connections: ArrayBuffer[Int] = ArrayBuffer()
-    for ( connection <- 1 until fields.length) {
+    for (connection <- 1 until fields.length) {
       connections += fields(connection).toInt
     }
 
     // Default distance and color is 9999 and white
-    var color:String = "WHITE"
-    var distance:Int = 9999
+    var color: String = "WHITE"
+    var distance: Int = 9999
 
     // Unless this is the character we're starting from
     if (heroID == startCharacterID) {
@@ -99,19 +101,19 @@ object DegreesOfSeparation {
   }
 
   /** Expands a BFSNode into this node and its children */
-  def bfsMap(node:BFSNode): Array[BFSNode] = {
+  def bfsMap(node: BFSNode): Array[BFSNode] = {
 
     // Extract data from the BFSNode
-    val characterID:Int = node._1
-    val data:BFSData = node._2
+    val characterID: Int = node._1
+    val data: BFSData = node._2
 
-    val connections:Array[Int] = data._1
-    val distance:Int = data._2
-    var color:String = data._3
+    val connections: Array[Int] = data._1
+    val distance: Int = data._2
+    var color: String = data._3
 
     // This is called from flatMap, so we return an array
     // of potentially many BFSNodes to add to our new RDD
-    var results:ArrayBuffer[BFSNode] = ArrayBuffer()
+    var results: ArrayBuffer[BFSNode] = ArrayBuffer()
 
     // Gray nodes are flagged for expansion, and create new
     // gray nodes for each connection
@@ -130,7 +132,7 @@ object DegreesOfSeparation {
         }
 
         // Create our new Gray node for this connection and add it to the results
-        val newEntry:BFSNode = (newCharacterID, (Array(), newDistance, newColor))
+        val newEntry: BFSNode = (newCharacterID, (Array(), newDistance, newColor))
         results += newEntry
       }
 
@@ -140,27 +142,27 @@ object DegreesOfSeparation {
 
     // Add the original node back in, so its connections can get merged with
     // the gray nodes in the reducer.
-    val thisEntry:BFSNode = (characterID, (connections, distance, color))
+    val thisEntry: BFSNode = (characterID, (connections, distance, color))
     results += thisEntry
 
     return results.toArray
   }
 
   /** Combine nodes for the same heroID, preserving the shortest length and darkest color. */
-  def bfsReduce(data1:BFSData, data2:BFSData): BFSData = {
+  def bfsReduce(data1: BFSData, data2: BFSData): BFSData = {
 
     // Extract data that we are combining
-    val edges1:Array[Int] = data1._1
-    val edges2:Array[Int] = data2._1
-    val distance1:Int = data1._2
-    val distance2:Int = data2._2
-    val color1:String = data1._3
-    val color2:String = data2._3
+    val edges1: Array[Int] = data1._1
+    val edges2: Array[Int] = data2._1
+    val distance1: Int = data1._2
+    val distance2: Int = data2._2
+    val color1: String = data1._3
+    val color2: String = data2._3
 
     // Default node values
-    var distance:Int = 9999
-    var color:String = "WHITE"
-    var edges:ArrayBuffer[Int] = ArrayBuffer()
+    var distance: Int = 9999
+    var color: String = "WHITE"
+    var edges: ArrayBuffer[Int] = ArrayBuffer()
 
     // See if one is the original node with its connections.
     // If so preserve them.
@@ -192,12 +194,12 @@ object DegreesOfSeparation {
     if (color2 == "GRAY" && color1 == "BLACK") {
       color = color1
     }
-	if (color1 == "GRAY" && color2 == "GRAY") {
-	  color = color1
-	}
-	if (color1 == "BLACK" && color2 == "BLACK") {
-	  color = color1
-	}
+    if (color1 == "GRAY" && color2 == "GRAY") {
+      color = color1
+    }
+    if (color1 == "BLACK" && color2 == "BLACK") {
+      color = color1
+    }
 
     return (edges.toArray, distance, color)
   }

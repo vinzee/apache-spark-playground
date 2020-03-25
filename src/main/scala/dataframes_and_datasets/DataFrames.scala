@@ -1,3 +1,5 @@
+package dataframes_and_datasets
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 
@@ -14,7 +16,7 @@ object DataFrames {
       .builder
       .appName("SparkSQL")
       .master("local[*]")
-//      .config("spark.sql.warehouse.dir", "file:///C:/temp") // Necessary to work around a Windows bug in Spark 2.0.0; omit if you're not on Windows.
+      //      .config("spark.sql.warehouse.dir", "file:///C:/temp") // Necessary to work around a Windows bug in Spark 2.0.0; omit if you're not on Windows.
       .getOrCreate()
 
     // Convert our csv file to a DataSet, using our Person case
@@ -45,12 +47,13 @@ object DataFrames {
     spark.stop()
   }
 
-  def mapper(line:String): Person = {
+  def mapper(line: String): Person = {
     val fields = line.split(',')
 
-    val person:Person = Person(fields(0).toInt, fields(1), fields(2).toInt, fields(3).toInt)
+    val person: Person = Person(fields(0).toInt, fields(1), fields(2).toInt, fields(3).toInt)
     return person
   }
 
-  case class Person(ID:Int, name:String, age:Int, numFriends:Int)
+  case class Person(ID: Int, name: String, age: Int, numFriends: Int)
+
 }

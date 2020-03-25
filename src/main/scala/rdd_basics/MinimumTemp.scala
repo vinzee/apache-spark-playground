@@ -1,4 +1,4 @@
-package main.scala
+package rdd_basics
 
 import org.apache.spark.SparkContext
 
@@ -14,21 +14,21 @@ object MinimumTemp {
       (stationID, entryType, temperature)
     })
 
-//    temps.foreach(println)
+    //    temps.foreach(println)
 
     val minTemps = temps.filter(x => x._2 == "TMIN")
 
     val stationTemps = minTemps.map(x => (x._1, x._3))
 
-    val minTempsByStation = stationTemps.reduceByKey( (x,y) => Math.min(x,y))
+    val minTempsByStation = stationTemps.reduceByKey((x, y) => Math.min(x, y))
 
     val results = minTempsByStation.collect()
 
     for (result <- results.sorted) {
-       val station = result._1
-       val temp = result._2
-       val formattedTemp = f"$temp%.2f F"
-       println(s"$station minimum temperature: $formattedTemp")
+      val station = result._1
+      val temp = result._2
+      val formattedTemp = f"$temp%.2f F"
+      println(s"$station minimum temperature: $formattedTemp")
     }
   }
 }

@@ -1,3 +1,5 @@
+package rdd_basics
+
 import java.nio.charset.CodingErrorAction
 
 import org.apache.spark.SparkContext
@@ -7,10 +9,10 @@ import scala.io.{Codec, Source}
 object MovieRating {
   def main(args: Array[String]): Unit = {
     val sc = new SparkContext("local[*]", "RatingsCounter")
-//    user id | item id | rating | timestamp.
+    //    user id | item id | rating | timestamp.
     val lines = sc.textFile("/Users/vinzee/code/SparkScala/resources/ml-100k/u.data")
     val ratings = lines.map(x => x.toString.split("\t")(1).toInt)
-    val ratingCounts = ratings.map(x => (x, 1)).reduceByKey((x,y) => x + y).sortBy(x => x._2)
+    val ratingCounts = ratings.map(x => (x, 1)).reduceByKey((x, y) => x + y).sortBy(x => x._2)
 
     val movieNames = sc.broadcast(loadMovieNames())
 
@@ -20,7 +22,7 @@ object MovieRating {
   }
 
   /** Load up a Map of movie IDs to movie names. */
-  def loadMovieNames() : Map[Int, String] = {
+  def loadMovieNames(): Map[Int, String] = {
 
     // Handle character encoding issues:
     implicit val codec = Codec("UTF-8")
@@ -28,16 +30,16 @@ object MovieRating {
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
     // Create a Map of Ints to Strings, and populate it from u.item.
-    var movieNames:Map[Int, String] = Map()
+    var movieNames: Map[Int, String] = Map()
 
-     val lines = Source.fromFile("resources/ml-100k/u.item").getLines()
-     for (line <- lines) {
-       var fields = line.split('|')
-       if (fields.length > 1) {
+    val lines = Source.fromFile("resources/ml-100k/u.item").getLines()
+    for (line <- lines) {
+      var fields = line.split('|')
+      if (fields.length > 1) {
         movieNames += (fields(0).toInt -> fields(1))
-       }
-     }
+      }
+    }
 
-     return movieNames
+    return movieNames
   }
 }

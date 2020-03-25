@@ -1,14 +1,12 @@
-package main.scala
+package rdd_basics
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
 
-import scala.math.min
-
 /** Find the minimum temperature by weather station */
 object MinTemperatures {
 
-    /** Our main function where the action happens */
+  /** Our main function where the action happens */
   def main(args: Array[String]) {
 
     // Set the log level to only print errors
@@ -30,21 +28,21 @@ object MinTemperatures {
     val stationTemps = minTemps.map(x => (x._1, x._3.toFloat))
 
     // Reduce by stationID retaining the minimum temperature found
-    val minTempsByStation = stationTemps.reduceByKey( (x,y) => min(x,y))
+    val minTempsByStation = stationTemps.reduceByKey((x, y) => Math.min(x, y))
 
     // Collect, format, and print the results
     val results = minTempsByStation.collect()
 
     for (result <- results.sorted) {
-       val station = result._1
-       val temp = result._2
-       val formattedTemp = f"$temp%.2f F"
-       println(s"$station minimum temperature: $formattedTemp")
+      val station = result._1
+      val temp = result._2
+      val formattedTemp = f"$temp%.2f F"
+      println(s"$station minimum temperature: $formattedTemp")
     }
 
   }
 
-  def parseLine(line:String)= {
+  def parseLine(line: String) = {
     val fields = line.split(",")
     val stationID = fields(0)
     val entryType = fields(2)

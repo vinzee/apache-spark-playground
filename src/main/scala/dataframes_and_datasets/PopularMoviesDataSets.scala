@@ -1,3 +1,5 @@
+package dataframes_and_datasets
+
 import java.nio.charset.CodingErrorAction
 
 import org.apache.log4j.{Level, Logger}
@@ -20,7 +22,7 @@ object PopularMoviesDataSets {
       .builder
       .appName("PopularMovies")
       .master("local[*]")
-//      .config("spark.sql.warehouse.dir", "file:///C:/temp") // Necessary to work around a Windows bug in Spark 2.0.0; omit if you're not on Windows.
+      //      .config("spark.sql.warehouse.dir", "file:///C:/temp") // Necessary to work around a Windows bug in Spark 2.0.0; omit if you're not on Windows.
       .getOrCreate()
 
     // Read in each rating line and extract the movie ID; construct an RDD of Movie objects.
@@ -55,7 +57,7 @@ object PopularMoviesDataSets {
     for (result <- top10) {
       // result is just a Row at this point; we need to cast it back.
       // Each row has movieID, count as above.
-      println (names(result(0).asInstanceOf[Int]) + ": " + result(1))
+      println(names(result(0).asInstanceOf[Int]) + ": " + result(1))
     }
 
     // Stop the session
@@ -63,7 +65,7 @@ object PopularMoviesDataSets {
   }
 
   /** Load up a Map of movie IDs to movie names. */
-  def loadMovieNames() : Map[Int, String] = {
+  def loadMovieNames(): Map[Int, String] = {
 
     // Handle character encoding issues:
     implicit val codec = Codec("UTF-8")
@@ -71,17 +73,17 @@ object PopularMoviesDataSets {
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
     // Create a Map of Ints to Strings, and populate it from u.item.
-    var movieNames:Map[Int, String] = Map()
+    var movieNames: Map[Int, String] = Map()
 
-     val lines = Source.fromFile("resources/ml-100k/u.item").getLines()
-     for (line <- lines) {
-       var fields = line.split('|')
-       if (fields.length > 1) {
+    val lines = Source.fromFile("resources/ml-100k/u.item").getLines()
+    for (line <- lines) {
+      var fields = line.split('|')
+      if (fields.length > 1) {
         movieNames += (fields(0).toInt -> fields(1))
-       }
-     }
+      }
+    }
 
-     return movieNames
+    return movieNames
   }
 
   // Case class so we can get a column name for our movie ID
